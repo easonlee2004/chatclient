@@ -4,16 +4,16 @@
 char buff[BUFF_SIZE];
 std::mutex mtx;
 
-// Ñ­»··¢ËÍÏûÏ¢
+// å¾ªç¯å‘é€æ¶ˆæ¯
 unsigned sendMsg(void* arg)
 {
     SOCKET sock = *((SOCKET*)arg);
 
     while (1)
     {
-        // ÊäÈëÊ±Ò²¼ÓËø£¬±ÜÃâÌáÊ¾·û´íÂÒ
+        // è¾“å…¥æ—¶ä¹ŸåŠ é”ï¼Œé¿å…æç¤ºç¬¦é”™ä¹±
         mtx.lock();
-        printf("");  // È·±£¹â±êÔÚÕıÈ·Î»ÖÃ
+        printf("");  // ç¡®ä¿å…‰æ ‡åœ¨æ­£ç¡®ä½ç½®
         mtx.unlock();
 
         scanf("%s", buff);
@@ -29,7 +29,7 @@ unsigned sendMsg(void* arg)
     return 0;
 }
 
-// Ñ­»·½ÓÊÕÏûÏ¢
+// å¾ªç¯æ¥æ”¶æ¶ˆæ¯
 unsigned recvMsg(void* arg)
 {
     SOCKET sock = *((SOCKET*)arg);
@@ -42,9 +42,9 @@ unsigned recvMsg(void* arg)
 
         msg[msg_len] = '\0';
 
-        // ¼ÓËø±£»¤Êä³ö
+        // åŠ é”ä¿æŠ¤è¾“å‡º
         mtx.lock();
-        printf("\n%s\n", msg);  // »»ĞĞ+ÏûÏ¢+»»ĞĞ+ÌáÊ¾·û
+        printf("\n%s\n", msg);  // æ¢è¡Œ+æ¶ˆæ¯+æ¢è¡Œ+æç¤ºç¬¦
         fflush(stdout);
         mtx.unlock();
     }
@@ -53,7 +53,7 @@ unsigned recvMsg(void* arg)
 
 int main()
 {
-    // ³õÊ¼»¯winsock
+    // åˆå§‹åŒ–winsock
     WORD wVersionRequested;
     WSADATA wsaData;
     int err;
@@ -71,17 +71,17 @@ int main()
         return -1;
     }
 
-    // ´´½¨socket
+    // åˆ›å»ºsocket
     SOCKET sockfd = socket(AF_INET, SOCK_STREAM, 0);
     SOCKADDR_IN servaddr;
 
-    // bind°ó¶¨socket
+    // bindç»‘å®šsocket
     memset(&servaddr, 0, sizeof(servaddr));
     servaddr.sin_family = AF_INET;
-    servaddr.sin_port = htons(8086); // ÔÆ·şÎñÆ÷¿ª·Å¶Ë¿Ú
-    inet_pton(AF_INET, "8.155.39.50", &servaddr.sin_addr); // ´Ë´¦ÎªÔÆ·şÎñÆ÷ip£¬¿ÉÒÔĞŞ¸Ä
+    servaddr.sin_port = htons(8086); // äº‘æœåŠ¡å™¨å¼€æ”¾ç«¯å£
+    inet_pton(AF_INET, "1.1.1.1", &servaddr.sin_addr); // æ­¤å¤„ä¸ºäº‘æœåŠ¡å™¨ipï¼Œå¯ä»¥ä¿®æ”¹
 
-    // Á¬½Ó·şÎñ¶Ë
+    // è¿æ¥æœåŠ¡ç«¯
     if (connect(sockfd, (SOCKADDR*)&servaddr, sizeof(servaddr)) == SOCKET_ERROR)
     {
         printf("connect error: %d", GetLastError());
@@ -89,10 +89,10 @@ int main()
     }
     else
     {
-        printf("»¶Ó­À´µ½ÁÄÌìÊÒ£¬ÇëÊäÈëÓÃ»§Ãû: ");
+        printf("æ¬¢è¿æ¥åˆ°èŠå¤©å®¤ï¼Œè¯·è¾“å…¥ç”¨æˆ·å: ");
     }
 
-    // ´´½¨Ñ­»··¢ËÍºÍ½ÓÊÕÏß³Ì
+    // åˆ›å»ºå¾ªç¯å‘é€å’Œæ¥æ”¶çº¿ç¨‹
     std::thread hSendHand(sendMsg, (void*)&sockfd);
     std::thread hRecvHand(recvMsg, (void*)&sockfd);
 
